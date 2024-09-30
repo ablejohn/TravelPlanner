@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import code from "https://js.getcode.com/v1";
+import "./Button.css";
 
 const Button = () => {
   const [paymentButton, setPaymentButton] = useState(null);

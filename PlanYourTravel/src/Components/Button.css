@@ -1,0 +1,13 @@
+
+#payment-button-container  {
+margin-left: 100px;
+
+}
+  
+
+  @media screen and (max-width: 768px) {
+    #payment-button-container {
+        margin-left: 0px; 
+ 
+    }
+  }

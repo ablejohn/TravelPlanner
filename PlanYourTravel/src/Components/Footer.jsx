@@ -128,9 +128,12 @@ export default function Footer() {
         className="text-center p-3"
         style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
       >
-        © 2020 Copyright:
-        <a className="text-white" href="https://mdbootstrap.com/">
-          MDBootstrap.com
+        © 2024 Copyright: 
+        <a
+          className="text-white"
+          href="https://www.linkedin.com/in/john-abe-601247236/"
+        >
+          John Ayomide ABE
         </a>
       </div>
     </MDBFooter>
