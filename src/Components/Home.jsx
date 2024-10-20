@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "./Button";
 import "./Custom.css";
-//import { planTravel } from "../services/Planner"; // Import the planTravel function
 
 const Home = () => {
   const { register, handleSubmit } = useForm();
