@@ -1,0 +1,94 @@
+/* Container styling for centralizing content */
+.travel-planner-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Full viewport height for vertical centering */
+    /*background-color: #f5f5f5; /* Background color for the page */
+    padding: 2rem; /* Padding to avoid content touching the edges */
+  }
+  
+  /* Styling the form and inputs */
+  form {
+    width: 100%;
+    max-width: 400px; /* Limit the form width to 400px for better design */
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  h5{
+    text-align: center;
+    font-size:1rem;
+    color:#0056b3;
+  }
+
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  .btn-primary {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Styling for the card displaying the trip plan */
+  .card {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .card-header {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    font-size: 1.2rem;
+  }
+  
+  .card-body {
+    padding: 15px;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    margin: 0 0 10px 0;
+  }
