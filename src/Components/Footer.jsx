@@ -13,7 +13,7 @@ export default function Footer() {
   return (
     <MDBFooter
       className="text-center text-white"
-      style={{ backgroundColor: "#caced1" }}
+      style={{ backgroundColor: "#070644" }}
     >
       <MDBContainer className="p-4">
         <section className="">
@@ -30,7 +30,7 @@ export default function Footer() {
                 <a href="#!">
                   <div
                     className="mask"
-                    style={{ backgroundColor: "rgba(251, 251, 251, 0.2)" }}
+                    style={{ backgroundColor: "rgba(251, 251, 241, 0.2)" }}
                   ></div>
                 </a>
               </MDBRipple>
@@ -128,7 +128,7 @@ export default function Footer() {
         className="text-center p-3"
         style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
       >
-        © 2024 Copyright: 
+        © 2024 Copyright:
         <a
           className="text-white"
           href="https://www.linkedin.com/in/john-abe-601247236/"

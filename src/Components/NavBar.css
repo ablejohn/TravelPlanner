@@ -1,0 +1,40 @@
+/* NavBar.css */
+
+/* Custom background for the navbar */
+.custom-navbar {
+    background-color: grey !important;
+    border-bottom: 2px solid #000; /* Optional: Adds a bottom border */
+    color: white;
+  }
+  
+  .custom-navbar .navbar-brand,
+  .custom-navbar .nav-link {
+    color: white !important;
+  }
+  
+  .custom-navbar .nav-link:hover {
+    color: lightgrey !important;
+  }
+/* NavBar.css */
+
+/* Custom background for the navbar */
+.custom-navbar {
+    background-color:#070644 !important;
+    border-bottom: 2px solid #000; /* Optional: Adds a bottom border */
+    color: white;
+  }
+  
+  .custom-navbar .navbar-brand,
+  .custom-navbar .nav-link {
+    color: white !important;
+  }
+  
+  .custom-navbar .nav-link:hover {
+    color: lightgrey !important;
+  }
+
+.navbar-logo {
+    height: 50px;
+    width: auto;
+  }
+  

@@ -1,13 +1,14 @@
-
-#payment-button-container  {
-margin-left: 100px;
-
+#payment-button-container {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically (if needed) */
+  margin: 0 auto; /* Optional: ensures no additional margins */
+  width: 100%; /* Ensures it takes full width of its parent */
 }
-  
 
-  @media screen and (max-width: 768px) {
-    #payment-button-container {
-        margin-left: 0px; 
- 
-    }
+@media screen and (max-width: 768px) {
+  #payment-button-container {
+    width: 100%; /* Ensures it stays responsive */
+    margin: 0; /* Removes any margin */
   }
+}
