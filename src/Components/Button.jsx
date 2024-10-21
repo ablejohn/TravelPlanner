@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import code from "https://js.getcode.com/v1";
 import "./Button.css";
 
-const Button = () => {
+const Button = ({ onPaymentVerified }) => {
   const [paymentButton, setPaymentButton] = useState(null);
 
   useEffect(() => {
@@ -12,12 +12,21 @@ const Button = () => {
       amount: 1,
     });
 
+    button.on("success", () => {
+      console.log("Payment successful");
+      onPaymentVerified();
+    });
+
+    button.on("error", (error) => {
+      console.error("Payment error:", error);
+    });
+
     setPaymentButton(button);
 
     return () => {
       button.unmount();
     };
-  }, []);
+  }, [onPaymentVerified]);
 
   return (
     <div id="payment-button-container">

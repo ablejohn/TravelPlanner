@@ -1,30 +1,43 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "./Button";
+import { planTravel } from "./travelPlannerAPI";
 import "./Custom.css";
 
 const Home = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
   const [tripPlan, setTripPlan] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState(null);
+  const [error, setError] = useState(null);
 
   const onSubmit = async (data) => {
     setIsLoading(true);
+    setFormData(data);
+    setError(null);
+    setIsLoading(false);
+  };
+
+  const handlePaymentVerified = async () => {
+    if (!formData) return;
+
+    setIsLoading(true);
+    setError(null);
     try {
       const generatedPlan = await planTravel(
-        data.location,
-        data.duration,
-        data.estimatedCost
+        formData.location,
+        formData.duration,
+        formData.estimatedCost
       );
       setTripPlan({
-        destinations: [data.location],
-        duration: data.duration,
-        cost: data.estimatedCost,
+        destinations: [formData.location],
+        duration: formData.duration,
+        cost: formData.estimatedCost,
         aiGeneratedPlan: generatedPlan,
       });
     } catch (error) {
       console.error("Failed to generate trip plan:", error);
-      // You might want to show an error message to the user here
+      setError("Failed to generate trip plan. Please try again later.");
     }
     setIsLoading(false);
   };
@@ -34,44 +47,37 @@ const Home = () => {
       <h2 className="mb-4">Plan Your Travel</h2>
       <h5 className="mb-4">Please Fill in your Information</h5>
       <form onSubmit={handleSubmit(onSubmit)} className="mb-4">
-        <div className="form-group">
-          <label htmlFor="location">Destination:</label>
-          <input
-            type="text"
-            id="location"
-            {...register("location")}
-            className="form-control"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="duration">Duration (days):</label>
-          <input
-            type="number"
-            id="duration"
-            {...register("duration")}
-            className="form-control"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="estimatedCost">Estimated Cost ($):</label>
-          <input
-            type="number"
-            id="estimatedCost"
-            {...register("estimatedCost")}
-            className="form-control"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="btn btn-primary mt-3"
-          disabled={isLoading}
-        >
-          {isLoading ? "Generating Trip Plan..." : "Generate Trip Plan"}
+        <input
+          {...register("location", { required: true })}
+          placeholder="Location"
+          className="form-control mb-2"
+        />
+        <input
+          type="number"
+          {...register("duration", { required: true })}
+          placeholder="Duration (days)"
+          className="form-control mb-2"
+        />
+        <input
+          type="number"
+          {...register("estimatedCost", { required: true })}
+          placeholder="Estimated Cost ($)"
+          className="form-control mb-2"
+        />
+        <button type="submit" className="btn btn-primary">
+          Submit
         </button>
       </form>
+
+      {formData && !tripPlan && (
+        <Button onPaymentVerified={handlePaymentVerified} />
+      )}
+
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
 
       {tripPlan && (
         <div className="card">
@@ -82,7 +88,6 @@ const Home = () => {
             <p>Estimated Cost: ${tripPlan.cost}</p>
             <h4>AI-Generated Plan:</h4>
             <pre>{tripPlan.aiGeneratedPlan}</pre>
-            <Button />
           </div>
         </div>
       )}
