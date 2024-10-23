@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { planTravel } from "../services/travelPlannerAPI";
 import TravelPlanDisplay from "./TravelPlanDisplay";
 import "./Custom.css";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const {
@@ -14,6 +15,8 @@ const Home = () => {
   const [tripPlan, setTripPlan] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate(); // Add this at the top with your other hooks
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -27,13 +30,15 @@ const Home = () => {
         Number(data.estimatedCost)
       );
 
-      // Structure the trip plan data
-      setTripPlan({
+      const tripPlanData = {
         destinations: [data.location],
         duration: data.duration,
         cost: data.estimatedCost,
         aiGeneratedPlan: generatedPlan,
-      });
+      };
+
+      // Navigate to the travel plan page with the data
+      navigate("/travel-plan", { state: { tripPlan: tripPlanData } });
     } catch (err) {
       console.error("Failed to generate trip plan:", err);
       const errorMessage = err.message.toLowerCase();

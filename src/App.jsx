@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Home from "./Components/Home";
+import TravelPlanPage from "./Components/TravelPlanPage";
 import AirplaneLoader from "./Lottiefiles/AirplaneLoader.json";
 import Lottie from "lottie-react";
 import NavBar from "./Components/NavBar";
@@ -11,10 +13,9 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading time
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 3000); // 3 seconds loading time, adjust as needed
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -35,13 +36,18 @@ const App = () => {
   }
 
   return (
-    <div>
-      <NavBar />
-      <div className="container my-5">
-        <Home />
+    <Router>
+      <div>
+        <NavBar />
+        <div className="container my-5">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/travel-plan" element={<TravelPlanPage />} />
+          </Routes>
+        </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </Router>
   );
 };
 
