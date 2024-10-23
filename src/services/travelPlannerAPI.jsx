@@ -1,15 +1,13 @@
 import { HfInference } from "@huggingface/inference";
 
 const API_KEY = import.meta.env.VITE_HUGGINGFACE_API_KEY;
-// Using a smaller, more reliable model
-const MODEL_ID = "gpt2"; // Changed from facebook/opt-125m
+const MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.2";
 
 const hf = new HfInference(API_KEY);
 
-// Improved delay function with exponential backoff
 const delay = (attemptNumber) => {
-  const baseDelay = 1000; // 1 second
-  const maxDelay = 10000; // 10 seconds
+  const baseDelay = 1000;
+  const maxDelay = 10000;
   const calculatedDelay = Math.min(
     baseDelay * Math.pow(2, attemptNumber),
     maxDelay
@@ -17,7 +15,28 @@ const delay = (attemptNumber) => {
   return new Promise((resolve) => setTimeout(resolve, calculatedDelay));
 };
 
-// Enhanced API call with better error handling
+// Keep the prompt template internal only
+const generatePrompt = (location, duration, estimatedCost) => {
+  const dailyBudget = Math.floor(estimatedCost / duration);
+  
+  return `As a travel expert, create a ${duration}-day travel plan for ${location} with a total budget of $${estimatedCost}.
+
+KEY ATTRACTIONS:
+[List 3-4 must-visit places with time needed and entry costs]
+
+ACCOMMODATION:
+[Specify area, type, and nightly cost]
+
+FOOD RECOMMENDATIONS:
+[List 2-3 local dishes with restaurants and costs]
+
+TRANSPORTATION:
+[List best ways to get around with costs]
+
+BUDGET BREAKDOWN:
+[Break down all costs, total must be under $${estimatedCost}]`;
+};
+
 const attemptApiCall = async (prompt, maxAttempts = 3) => {
   let lastError = null;
 
@@ -27,12 +46,12 @@ const attemptApiCall = async (prompt, maxAttempts = 3) => {
         model: MODEL_ID,
         inputs: prompt,
         parameters: {
-          max_new_tokens: 150, // Reduced tokens
-          temperature: 0.7,
-          top_p: 0.95,
+          max_new_tokens: 1000,
+          temperature: 0.3,
+          top_p: 0.9,
           repetition_penalty: 1.2,
           do_sample: true,
-          wait_for_model: true, // Add this to ensure model is loaded
+          wait_for_model: true,
         },
       });
 
@@ -43,24 +62,82 @@ const attemptApiCall = async (prompt, maxAttempts = 3) => {
       return response;
     } catch (error) {
       lastError = error;
-      console.error(`Attempt ${attempt + 1} failed:`, error);
-
-      // Check for specific error types
       if (error.response?.status === 401) {
-        throw new Error("Invalid API key. Please check your configuration.");
+        throw new Error("Invalid API key");
       }
-
       if (attempt < maxAttempts - 1) {
         await delay(attempt);
+        continue;
+      }
+      throw lastError;
+    }
+  }
+};
+
+const processResponse = (text) => {
+  // Extract just the generated content without any prompt templates
+  const sections = [
+    "KEY ATTRACTIONS",
+    "ACCOMMODATION",
+    "FOOD RECOMMENDATIONS",
+    "TRANSPORTATION",
+    "BUDGET BREAKDOWN"
+  ];
+  
+  let cleanedText = "";
+  let currentSection = "";
+  
+  // Process the text line by line
+  const lines = text.split('\n');
+  for (let line of lines) {
+    line = line.trim();
+    
+    // Skip empty lines and prompt templates
+    if (!line || line.includes("[") || line.includes("Important:") || line.includes("must be")) {
+      continue;
+    }
+    
+    // Check if this is a section header
+    const sectionHeader = sections.find(section => 
+      line.toUpperCase().includes(section)
+    );
+    
+    if (sectionHeader) {
+      // Add spacing between sections
+      if (cleanedText) {
+        cleanedText += "\n\n";
+      }
+      currentSection = sectionHeader;
+      cleanedText += `${line}\n`;
+    } else if (line && currentSection) {
+      // Add content lines that don't match prompt templates
+      if (!line.includes("List") && !line.includes("Specify") && !line.includes("Break down")) {
+        cleanedText += `${line}\n`;
       }
     }
   }
+  
+  // Clean up any remaining prompt artifacts
+  cleanedText = cleanedText
+    .replace(/\[.*?\]/g, '')                    // Remove any remaining bracketed content
+    .replace(/\n{3,}/g, '\n\n')                 // Replace multiple newlines with double newlines
+    .replace(/- Area:/g, 'Area:')               // Clean up formatting
+    .replace(/- Type:/g, 'Type:')
+    .replace(/- Cost:/g, 'Cost:')
+    .trim();
+  
+  return cleanedText;
+};
 
-  // If we've exhausted all attempts, throw a user-friendly error
-  throw new Error(
-    `Failed to generate travel plan after ${maxAttempts} attempts. ` +
-      `${lastError?.message || "Service is temporarily unavailable."}`
-  );
+const validateBudgetBreakdown = (text, totalBudget) => {
+  const budgetSection = text.match(/BUDGET BREAKDOWN:[\s\S]*?(?=\n\n|$)/);
+  if (!budgetSection) return true;
+
+  const amounts = budgetSection[0].match(/\$\d+(?:,\d{3})*(?:\.\d{2})?/g);
+  if (!amounts) return true;
+
+  const total = amounts[amounts.length - 1].replace(/[$,]/g, '');
+  return parseFloat(total) <= totalBudget * 1.1;
 };
 
 export const planTravel = async (location, duration, estimatedCost) => {
@@ -68,40 +145,30 @@ export const planTravel = async (location, duration, estimatedCost) => {
     validateTravelInput(location, duration, estimatedCost);
 
     if (!API_KEY) {
-      throw new Error(
-        "API key is not set. Please check your environment variables."
-      );
+      throw new Error("API key is not set");
     }
 
-    // Simplified prompt to reduce token usage
-    const prompt = `Brief travel plan for ${duration} days in ${location} with $${estimatedCost} budget:
-1. Key attractions
-2. Where to stay
-3. Local food
-4. Transportation
-5. Budget breakdown`;
-
+    const prompt = generatePrompt(location, duration, estimatedCost);
     const response = await attemptApiCall(prompt);
+    let cleanedText = processResponse(response.generated_text);
 
-    // Clean and format the response
-    const cleanedText = response.generated_text
-      .trim()
-      .replace(/^Assistant:|^Human:/gm, "")
-      .replace(/\n{3,}/g, "\n\n");
+    if (cleanedText.length < 100) {
+      throw new Error("Generated response is too short");
+    }
 
-    if (cleanedText.length < 50) {
-      throw new Error("Generated response too short, please try again");
+    if (!validateBudgetBreakdown(cleanedText, estimatedCost)) {
+      const retryResponse = await attemptApiCall(prompt);
+      cleanedText = processResponse(retryResponse.generated_text);
+      
+      if (!validateBudgetBreakdown(cleanedText, estimatedCost)) {
+        throw new Error("Budget allocation exceeds total budget");
+      }
     }
 
     return cleanedText;
-  } catch (error) {
-    // Add user-friendly error message
-    const errorMessage = error.message.includes("API key")
-      ? error.message
-      : "Unable to generate travel plan at the moment. Please try again in a few moments.";
 
-    console.error("Error in planTravel:", error);
-    throw new Error(errorMessage);
+  } catch (error) {
+    throw new Error(`Unable to generate travel plan: ${error.message}`);
   }
 };
 
@@ -112,11 +179,13 @@ export const validateTravelInput = (location, duration, estimatedCost) => {
     errors.push("Please enter a valid location");
   }
 
-  if (!duration || duration < 1 || duration > 30) {
+  const numDuration = Number(duration);
+  if (!numDuration || numDuration < 1 || numDuration > 30) {
     errors.push("Duration must be between 1 and 30 days");
   }
 
-  if (!estimatedCost || estimatedCost < 50) {
+  const numCost = Number(estimatedCost);
+  if (!numCost || numCost < 50) {
     errors.push("Budget must be at least $50");
   }
 

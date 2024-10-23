@@ -1,7 +1,7 @@
-// src/components/Home.jsx
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { planTravel } from "../services/travelPlannerAPI";
+import TravelPlanDisplay from "./TravelPlanDisplay"; // Import the component
 import "./Custom.css";
 
 const Home = () => {
@@ -174,7 +174,7 @@ const Home = () => {
             <div className="mt-4">
               <h4 className="font-bold mb-2">Detailed Itinerary:</h4>
               <div className="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">
-                {tripPlan.aiGeneratedPlan}
+                <TravelPlanDisplay travelData={tripPlan.aiGeneratedPlan} />
               </div>
             </div>
           </div>
