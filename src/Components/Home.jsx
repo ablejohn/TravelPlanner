@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { planTravel } from "../services/travelPlannerAPI";
-import TravelPlanDisplay from "./TravelPlanDisplay"; // Import the component
+import TravelPlanDisplay from "./TravelPlanDisplay";
 import "./Custom.css";
 
 const Home = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
+
   const [tripPlan, setTripPlan] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -17,47 +18,35 @@ const Home = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     setError(null);
-    setTripPlan(null); // Clear previous results
+    setTripPlan(null);
 
     try {
-      // Input validation
-      if (data.duration < 1) {
-        throw new Error("Duration must be at least 1 day");
-      }
-      if (data.estimatedCost < 50) {
-        throw new Error("Estimated cost must be at least $50");
-      }
-
-      // Simulate payment process (you can remove this if not needed)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       const generatedPlan = await planTravel(
         data.location,
         Number(data.duration),
         Number(data.estimatedCost)
       );
 
+      // Structure the trip plan data
       setTripPlan({
         destinations: [data.location],
         duration: data.duration,
         cost: data.estimatedCost,
         aiGeneratedPlan: generatedPlan,
       });
-    } catch (error) {
-      console.error("Failed to generate trip plan:", error);
-      if (error.message.includes("API key")) {
-        setError("Authentication error. Please contact support.");
-      } else if (error.message.includes("Service Unavailable")) {
-        setError(
-          "The travel planning service is temporarily unavailable. Please try again in a few moments."
-        );
-      } else if (error.response?.status === 429) {
-        setError(
-          "We're experiencing high demand. Please try again in a few minutes."
-        );
+    } catch (err) {
+      console.error("Failed to generate trip plan:", err);
+      const errorMessage = err.message.toLowerCase();
+
+      if (errorMessage.includes("api key")) {
+        setError("Authentication error. Please check your API configuration.");
+      } else if (errorMessage.includes("service unavailable")) {
+        setError("Service is temporarily unavailable. Please try again later.");
+      } else if (err.response?.status === 429) {
+        setError("Too many requests. Please wait a moment and try again.");
       } else {
         setError(
-          error.message || "An unexpected error occurred. Please try again."
+          err.message || "Failed to generate travel plan. Please try again."
         );
       }
     } finally {
@@ -69,7 +58,7 @@ const Home = () => {
     <div className="travel-planner-container p-4 max-w-2xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-2">Plan Your Travel</h2>
       <h5 className="text-gray-600 text-center mb-6">
-        Please Fill in your Information
+        Enter your travel details below
       </h5>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -84,6 +73,7 @@ const Home = () => {
             })}
             placeholder="Enter destination (e.g., Paris, France)"
             className="form-control"
+            disabled={isLoading}
           />
           {errors.location && (
             <span className="text-red-500 text-sm">
@@ -97,11 +87,12 @@ const Home = () => {
             type="number"
             {...register("duration", {
               required: "Duration is required",
-              min: { value: 1, message: "Duration must be at least 1 day" },
-              max: { value: 30, message: "Duration cannot exceed 30 days" },
+              min: { value: 1, message: "Minimum duration is 1 day" },
+              max: { value: 30, message: "Maximum duration is 30 days" },
             })}
             placeholder="Duration (days)"
             className="form-control"
+            disabled={isLoading}
           />
           {errors.duration && (
             <span className="text-red-500 text-sm">
@@ -114,11 +105,12 @@ const Home = () => {
           <input
             type="number"
             {...register("estimatedCost", {
-              required: "Estimated cost is required",
+              required: "Budget is required",
               min: { value: 50, message: "Minimum budget is $50" },
             })}
             placeholder="Budget in USD ($)"
             className="form-control"
+            disabled={isLoading}
           />
           {errors.estimatedCost && (
             <span className="text-red-500 text-sm">
@@ -130,7 +122,7 @@ const Home = () => {
         <button
           type="submit"
           className="btn btn-primary w-full"
-          disabled={isLoading}
+          disabled={isLoading || isSubmitting}
         >
           {isLoading ? (
             <span className="flex items-center justify-center">
@@ -145,15 +137,14 @@ const Home = () => {
 
       {error && (
         <div className="alert alert-danger mt-4" role="alert">
-          <strong>Error: </strong>
           {error}
         </div>
       )}
 
-      {tripPlan && (
+      {tripPlan && !error && (
         <div className="card mt-6">
           <div className="card-header bg-blue-50">
-            <h3 className="text-xl font-bold">Your Trip Plan</h3>
+            <h3 className="text-xl font-bold">Your Travel Plan</h3>
           </div>
           <div className="card-body">
             <div className="grid grid-cols-3 gap-4 mb-4">
@@ -173,7 +164,7 @@ const Home = () => {
 
             <div className="mt-4">
               <h4 className="font-bold mb-2">Detailed Itinerary:</h4>
-              <div className="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">
+              <div className="bg-gray-50 p-4 rounded-lg">
                 <TravelPlanDisplay travelData={tripPlan.aiGeneratedPlan} />
               </div>
             </div>

@@ -1,106 +1,63 @@
-// src/Components/TravelPlanDisplay.jsx
 import React from "react";
 
+const styles = {
+  container: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "20px",
+    justifyContent: "center",
+    padding: "20px",
+  },
+  sectionCard: {
+    backgroundColor: "#f9f9f9",
+    borderRadius: "8px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    padding: "20px",
+    minWidth: "300px",
+    maxWidth: "400px",
+    flex: "1 1 300px",
+  },
+  header: {
+    fontSize: "20px",
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: "10px",
+    borderBottom: "2px solid #4CAF50",
+    paddingBottom: "5px",
+  },
+  content: {
+    color: "#555",
+    whiteSpace: "pre-wrap", // Preserve line breaks from API response
+  },
+};
+
 const TravelPlanDisplay = ({ travelData }) => {
-  // Parse the raw text into sections
-  const parseContent = (rawText) => {
-    const sections = {
-      attractions: [],
-      accommodation: [],
-      food: [],
-      transportation: [],
-      budget: [],
-    };
-
-    let currentSection = null;
-
-    rawText.split("\n").forEach((line) => {
-      if (line.includes("KEY ATTRACTIONS:")) {
-        currentSection = "attractions";
-      } else if (line.includes("ACCOMMODATION:")) {
-        currentSection = "accommodation";
-      } else if (line.includes("FOOD RECOMMENDATIONS:")) {
-        currentSection = "food";
-      } else if (line.includes("TRANSPORTATION:")) {
-        currentSection = "transportation";
-      } else if (line.includes("BUDGET BREAKDOWN:")) {
-        currentSection = "budget";
-      } else if (line.trim() && currentSection) {
-        sections[currentSection].push(line.trim());
-      }
-    });
-
-    return sections;
-  };
-
-  const sections = parseContent(travelData);
-
   return (
-    <div className="space-y-6">
-      <section>
-        <h2 className="text-xl font-semibold text-blue-800 mb-3">
-          Key Attractions
-        </h2>
-        <ul className="list-disc pl-5 space-y-2">
-          {sections.attractions.map((item, index) => (
-            <li key={index} className="text-gray-700">
-              {item}
-            </li>
-          ))}
-        </ul>
-      </section>
+    <div style={styles.container}>
+      <div style={styles.sectionCard}>
+        <div style={styles.header}>Key Attractions</div>
+        <div style={styles.content}>{travelData.attractions}</div>
+      </div>
 
-      <section>
-        <h2 className="text-xl font-semibold text-blue-800 mb-3">
-          Accommodation
-        </h2>
-        <ul className="list-disc pl-5 space-y-2">
-          {sections.accommodation.map((item, index) => (
-            <li key={index} className="text-gray-700">
-              {item}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <div style={styles.sectionCard}>
+        <div style={styles.header}>Accommodation</div>
+        <div style={styles.content}>{travelData.accommodation}</div>
+      </div>
 
-      <section>
-        <h2 className="text-xl font-semibold text-blue-800 mb-3">
-          Food Recommendations
-        </h2>
-        <ul className="list-disc pl-5 space-y-2">
-          {sections.food.map((item, index) => (
-            <li key={index} className="text-gray-700">
-              {item}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <div style={styles.sectionCard}>
+        <div style={styles.header}>Food Recommendations</div>
+        <div style={styles.content}>{travelData.food}</div>
+      </div>
 
-      <section>
-        <h2 className="text-xl font-semibold text-blue-800 mb-3">
-          Transportation
-        </h2>
-        <ul className="list-disc pl-5 space-y-2">
-          {sections.transportation.map((item, index) => (
-            <li key={index} className="text-gray-700">
-              {item}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <div style={styles.sectionCard}>
+        <div style={styles.header}>Transportation</div>
+        <div style={styles.content}>{travelData.transportation}</div>
+      </div>
 
-      <section className="bg-blue-50 p-4 rounded-lg">
-        <h2 className="text-xl font-semibold text-blue-800 mb-3">
-          Budget Breakdown
-        </h2>
-        <ul className="list-none space-y-2">
-          {sections.budget.map((item, index) => (
-            <li key={index} className="text-gray-700 font-medium">
-              {item}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <div style={styles.sectionCard}>
+        <div style={styles.header}>Budget Breakdown</div>
+        <div style={styles.content}>{travelData.budget}</div>
+      </div>
     </div>
   );
 };

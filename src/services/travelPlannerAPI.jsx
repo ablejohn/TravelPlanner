@@ -15,27 +15,35 @@ const delay = (attemptNumber) => {
   return new Promise((resolve) => setTimeout(resolve, calculatedDelay));
 };
 
-// Keep the prompt template internal only
-const generatePrompt = (location, duration, estimatedCost) => {
-  const dailyBudget = Math.floor(estimatedCost / duration);
-  
-  return `As a travel expert, create a ${duration}-day travel plan for ${location} with a total budget of $${estimatedCost}.
+const generatePrompt = (location, duration, estimatedCost) => `
+[INST]As a travel planner, create a detailed ${duration}-day travel plan for ${location} with a budget of $${estimatedCost}.
+
+Respond EXACTLY in this format:
 
 KEY ATTRACTIONS:
-[List 3-4 must-visit places with time needed and entry costs]
+- List 3-4 must-visit attractions
+- Include entry fees and recommended visit duration
+- Total attractions budget
 
 ACCOMMODATION:
-[Specify area, type, and nightly cost]
+- 2-3 specific hotel/hostel recommendations
+- Include price per night
+- Total accommodation budget
 
 FOOD RECOMMENDATIONS:
-[List 2-3 local dishes with restaurants and costs]
+- 3-4 local dishes or restaurants
+- Price range for each
+- Estimated daily food budget
 
 TRANSPORTATION:
-[List best ways to get around with costs]
+- Best ways to get around
+- Specific costs for tickets/passes
+- Total transportation budget
 
 BUDGET BREAKDOWN:
-[Break down all costs, total must be under $${estimatedCost}]`;
-};
+- Daily breakdown of all expenses
+- Category totals
+- Must stay within total budget of $${estimatedCost}[/INST]`;
 
 const attemptApiCall = async (prompt, maxAttempts = 3) => {
   let lastError = null;
@@ -47,11 +55,12 @@ const attemptApiCall = async (prompt, maxAttempts = 3) => {
         inputs: prompt,
         parameters: {
           max_new_tokens: 1000,
-          temperature: 0.3,
+          temperature: 0.7,
           top_p: 0.9,
           repetition_penalty: 1.2,
           do_sample: true,
           wait_for_model: true,
+          stop: ["[/INST]", "Human:", "Assistant:"],
         },
       });
 
@@ -59,74 +68,58 @@ const attemptApiCall = async (prompt, maxAttempts = 3) => {
         throw new Error("Empty response received");
       }
 
-      return response;
+      // Clean up the response
+      const cleanedText = response.generated_text
+        .replace(prompt, "")
+        .replace(/\[\/INST\]/g, "")
+        .replace(/^[\s\n]*/, "")
+        .trim();
+
+      return { generated_text: cleanedText };
     } catch (error) {
+      console.error(`Attempt ${attempt + 1} failed:`, error);
       lastError = error;
+
       if (error.response?.status === 401) {
         throw new Error("Invalid API key");
       }
+
       if (attempt < maxAttempts - 1) {
-        await delay(attempt);
+        console.log(`Retrying in ${await delay(attempt)}ms...`);
         continue;
       }
+
       throw lastError;
     }
   }
 };
 
 const processResponse = (text) => {
-  // Extract just the generated content without any prompt templates
-  const sections = [
-    "KEY ATTRACTIONS",
-    "ACCOMMODATION",
-    "FOOD RECOMMENDATIONS",
-    "TRANSPORTATION",
-    "BUDGET BREAKDOWN"
-  ];
-  
-  let cleanedText = "";
-  let currentSection = "";
-  
-  // Process the text line by line
-  const lines = text.split('\n');
-  for (let line of lines) {
-    line = line.trim();
-    
-    // Skip empty lines and prompt templates
-    if (!line || line.includes("[") || line.includes("Important:") || line.includes("must be")) {
-      continue;
-    }
-    
-    // Check if this is a section header
-    const sectionHeader = sections.find(section => 
-      line.toUpperCase().includes(section)
-    );
-    
-    if (sectionHeader) {
-      // Add spacing between sections
-      if (cleanedText) {
-        cleanedText += "\n\n";
-      }
-      currentSection = sectionHeader;
-      cleanedText += `${line}\n`;
-    } else if (line && currentSection) {
-      // Add content lines that don't match prompt templates
-      if (!line.includes("List") && !line.includes("Specify") && !line.includes("Break down")) {
-        cleanedText += `${line}\n`;
-      }
-    }
-  }
-  
-  // Clean up any remaining prompt artifacts
-  cleanedText = cleanedText
-    .replace(/\[.*?\]/g, '')                    // Remove any remaining bracketed content
-    .replace(/\n{3,}/g, '\n\n')                 // Replace multiple newlines with double newlines
-    .replace(/- Area:/g, 'Area:')               // Clean up formatting
-    .replace(/- Type:/g, 'Type:')
-    .replace(/- Cost:/g, 'Cost:')
-    .trim();
-  
-  return cleanedText;
+  const sections = {
+    attractions: "",
+    accommodation: "",
+    food: "",
+    transportation: "",
+    budget: "",
+  };
+
+  // More specific regex patterns
+  const sectionPatterns = {
+    attractions: /KEY ATTRACTIONS:([\s\S]*?)(?=ACCOMMODATION:|$)/i,
+    accommodation: /ACCOMMODATION:([\s\S]*?)(?=FOOD RECOMMENDATIONS:|$)/i,
+    food: /FOOD RECOMMENDATIONS:([\s\S]*?)(?=TRANSPORTATION:|$)/i,
+    transportation: /TRANSPORTATION:([\s\S]*?)(?=BUDGET BREAKDOWN:|$)/i,
+    budget: /BUDGET BREAKDOWN:([\s\S]*?)$/i,
+  };
+
+  Object.entries(sectionPatterns).forEach(([key, pattern]) => {
+    const match = text.match(pattern);
+    sections[key] = match
+      ? match[1].trim()
+      : "No specific information available.";
+  });
+
+  return sections;
 };
 
 const validateBudgetBreakdown = (text, totalBudget) => {
@@ -136,8 +129,8 @@ const validateBudgetBreakdown = (text, totalBudget) => {
   const amounts = budgetSection[0].match(/\$\d+(?:,\d{3})*(?:\.\d{2})?/g);
   if (!amounts) return true;
 
-  const total = amounts[amounts.length - 1].replace(/[$,]/g, '');
-  return parseFloat(total) <= totalBudget * 1.1;
+  const total = parseFloat(amounts[amounts.length - 1].replace(/[$,]/g, ""));
+  return total <= totalBudget * 1.1;
 };
 
 export const planTravel = async (location, duration, estimatedCost) => {
@@ -150,25 +143,23 @@ export const planTravel = async (location, duration, estimatedCost) => {
 
     const prompt = generatePrompt(location, duration, estimatedCost);
     const response = await attemptApiCall(prompt);
-    let cleanedText = processResponse(response.generated_text);
 
-    if (cleanedText.length < 100) {
-      throw new Error("Generated response is too short");
+    if (!response?.generated_text) {
+      throw new Error("Failed to generate travel plan.");
     }
 
-    if (!validateBudgetBreakdown(cleanedText, estimatedCost)) {
+    let processedResponse = processResponse(response.generated_text);
+
+    if (!validateBudgetBreakdown(response.generated_text, estimatedCost)) {
+      console.warn("Budget exceeded, retrying...");
       const retryResponse = await attemptApiCall(prompt);
-      cleanedText = processResponse(retryResponse.generated_text);
-      
-      if (!validateBudgetBreakdown(cleanedText, estimatedCost)) {
-        throw new Error("Budget allocation exceeds total budget");
-      }
+      processedResponse = processResponse(retryResponse.generated_text);
     }
 
-    return cleanedText;
-
+    return processedResponse;
   } catch (error) {
-    throw new Error(`Unable to generate travel plan: ${error.message}`);
+    console.error("Error in planTravel:", error);
+    throw new Error(error.message || "Failed to generate travel plan");
   }
 };
 
