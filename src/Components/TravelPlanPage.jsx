@@ -145,7 +145,7 @@ const TravelPlanPage = () => {
 
       <div style={styles.buttonContainer}>
         <MDBBtn onClick={() => navigate("/")}>Create New Plan</MDBBtn>
-        <MDBBtn onClick={() => window.print()} color="success">
+        <MDBBtn onClick={() => window.print()} color="#070644">
           Save as PDF
         </MDBBtn>
       </div>
