@@ -22,8 +22,16 @@ const styles = {
     marginBottom: "20px",
     textAlign: "center",
     fontWeight: "Bold",
-  },
-  summary: {
+    "@media (max-width: 768px)": {
+        fontSize: "2.5rem",
+        marginBottom: "15px",
+    },
+    "@media (max-width: 480px)": {
+        fontSize: "2rem",
+        marginBottom: "10px",
+    }
+},
+summary: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
     gap: "20px",
@@ -32,21 +40,50 @@ const styles = {
     backgroundColor: "#fff",
     borderRadius: "8px",
     boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-  },
-  summaryItem: {
+    "@media (max-width: 768px)": {
+        gap: "15px",
+        padding: "15px",
+        marginBottom: "20px",
+    },
+    "@media (max-width: 480px)": {
+        gridTemplateColumns: "1fr",
+        gap: "10px",
+        padding: "10px",
+    }
+},
+summaryItem: {
     textAlign: "center",
     padding: "15px",
-  },
-  summaryLabel: {
+    "@media (max-width: 768px)": {
+        padding: "10px",
+    },
+    "@media (max-width: 480px)": {
+        padding: "8px",
+    }
+},
+summaryLabel: {
     fontWeight: "bold",
     fontSize: "2rem",
     color: "#34495e",
     marginBottom: "5px",
-  },
-  summaryValue: {
+    "@media (max-width: 768px)": {
+        fontSize: "1.5rem",
+        marginBottom: "3px",
+    },
+    "@media (max-width: 480px)": {
+        fontSize: "1.2rem",
+    }
+},
+summaryValue: {
     color: "#7f8c8d",
     fontSize: "1.8rem",
-  },
+    "@media (max-width: 768px)": {
+        fontSize: "1.3rem",
+    },
+    "@media (max-width: 480px)": {
+        fontSize: "1.1rem",
+    }
+}
   sectionsContainer: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
