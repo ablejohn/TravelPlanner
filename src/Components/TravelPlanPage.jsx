@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MDBBtn } from "mdb-react-ui-kit";
-import Button from "./Button";
 
 const styles = {
   container: {
@@ -92,32 +91,10 @@ const styles = {
 const TravelPlanPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [showPaymentButton, setShowPaymentButton] = useState(false);
-  const [navigationAttempted, setNavigationAttempted] = useState(false);
   const tripPlan = location.state?.tripPlan;
 
-  useEffect(() => {
-    // Reset navigation attempt state when component mounts
-    setNavigationAttempted(false);
-  }, []);
-
-  const handlePaymentVerified = () => {
-    try {
-      setNavigationAttempted(true);
-      // Add a small delay to ensure state updates are processed
-      setTimeout(() => {
-        navigate("/print", {
-          state: { tripPlan },
-          replace: true, // Use replace to avoid history stack issues
-        });
-      }, 100);
-    } catch (error) {
-      console.error("Navigation error:", error);
-      // Fallback navigation if the first attempt fails
-      if (!navigationAttempted) {
-        window.location.href = "/print";
-      }
-    }
+  const handlePrintPDF = () => {
+    window.print();
   };
 
   if (!tripPlan) {
@@ -184,17 +161,13 @@ const TravelPlanPage = () => {
         >
           Create New Plan
         </MDBBtn>
-        {!showPaymentButton ? (
-          <MDBBtn
-            onClick={() => setShowPaymentButton(true)}
-            className="custom-btn"
-            style={{ width: "100%", maxWidth: "300px" }}
-          >
-            Pay to Save Travel Plan
-          </MDBBtn>
-        ) : (
-          <Button onPaymentVerified={handlePaymentVerified} />
-        )}
+        <MDBBtn
+          onClick={handlePrintPDF}
+          className="custom-btn"
+          style={{ width: "100%", maxWidth: "300px" }}
+        >
+          Save as PDF
+        </MDBBtn>
       </div>
     </div>
   );
