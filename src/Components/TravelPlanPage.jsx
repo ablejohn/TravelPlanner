@@ -17,19 +17,11 @@ const styles = {
     boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
   },
   title: {
-    fontSize: "4rem",
+    fontSize: "2.5rem",
     color: "#0a4275",
     marginBottom: "20px",
     textAlign: "center",
     fontWeight: "Bold",
-    "@media (max-width: 768px)": {
-      fontSize: "1rem",
-      marginBottom: "15px",
-    },
-    "@media (max-width: 480px)": {
-      fontSize: "1rem",
-      marginBottom: "10px",
-    },
   },
   summary: {
     display: "grid",
