@@ -23,11 +23,11 @@ const styles = {
     textAlign: "center",
     fontWeight: "Bold",
     "@media (max-width: 768px)": {
-      fontSize: "2.5rem",
+      fontSize: "1rem",
       marginBottom: "15px",
     },
     "@media (max-width: 480px)": {
-      fontSize: "2rem",
+      fontSize: "1rem",
       marginBottom: "10px",
     },
   },
