@@ -9,28 +9,29 @@ const Button = ({ onPaymentVerified }) => {
     const { button } = code.elements.create("button", {
       currency: "usd",
       destination: "AWKF7MP8PYcUicTo1makUkpVrMjzL9BULqeRQHG9ni6X",
-      amount: 1,
+      amount: 1, // Amount in USD
     });
 
     button.on("success", () => {
       console.log("Payment successful");
-      onPaymentVerified();
+      onPaymentVerified(); // Call the parent function to handle post-payment actions
+      window.print(); // Trigger the print dialog after payment is verified
     });
 
     button.on("error", (error) => {
       console.error("Payment error:", error);
+      alert("An error occurred during payment. Please try again."); // User feedback
     });
 
     setPaymentButton(button);
 
     return () => {
-      button.unmount();
+      button.unmount(); // Clean up the button on component unmount
     };
   }, [onPaymentVerified]);
 
   return (
     <div id="payment-button-container">
-      <p>Purchase this trip plan for $1?</p>
       {paymentButton && paymentButton.mount("#payment-button-container")}
     </div>
   );

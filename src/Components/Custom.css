@@ -29,7 +29,17 @@ body {
   font-weight: 600;
   margin-bottom: 20px;
 }
+@media screen and (max-width: 768px) {
+  .travel-planner-container h2 {
+    font-size: 3rem; /* Smaller font size for tablets */
+  }
+}
 
+@media screen and (max-width: 576px) {
+  .travel-planner-container h2 {
+    font-size: 2rem; /* Even smaller font size for mobile phones */
+  }
+}
 .travel-planner-container h5 {
   text-align: center;
   font-size: 1.5rem;
@@ -59,14 +69,25 @@ body {
   padding: 15px;
   font-size: 1.5rem;
   border-radius: 8px;
-  background-color: #070644 ;
+  background-color: #08061f !important;
   border: none;
   color: #fff;
   transition: background-color 0.3s;
 }
 
 .travel-planner-container .btn-primary:hover {
-  background-color: #0056b3;
+  background-color: #070644 !important;
+}
+@media screen and (max-width: 768px) {
+  .travel-planner-container .btn-primary {
+    font-size: 1rem; /* Smaller font size for tablets */
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .travel-planner-container .btn-primary:hover {
+    background-color: #070644 !important;/
+  }
 }
 
 /* Card styling */
@@ -85,7 +106,77 @@ body {
   border-radius: 10px 10px 0 0;
 }
 
+
 .card-body {
   padding: 20px;
   font-size: 1.2rem;
+}
+/* Footer Css*/
+/* Ensure the body takes the full height of the viewport */
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* Main content should take up all available space */
+.container {
+  flex: 1;
+}
+
+/* Footer styles */
+footer {
+  background-color: #0a4275;
+  color: white;
+  text-align: center;
+  padding: 1rem 0;
+  position: relative;
+  width: 100%;
+  
+}
+
+footer .container {
+  padding: 0.5rem !important;
+}
+
+footer .text-center {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 1rem 0;
+}
+
+@media screen and (max-width: 768px) {
+  .me-3 {
+    margin-left: 0 !important; /* Reset the margin */
+    margin-right: 0.5rem; /* Adjust the right margin if needed */
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .me-3 {
+    margin-left: 0 !important; /* Reset the margin */
+    margin-right: 0.25rem; /* Adjust the right margin if needed */
+  }
+}
+
+
+
+.me-3 {
+  margin-left: 27rem !important; /* Adjust this value as needed */
+  font-size: 15px !important;
+}
+
+@media screen and (max-width: 768px) {
+  .me-3 {
+    margin-left: 0 !important; /* Reset the margin */
+    margin-right: 0.5rem; /* Adjust the right margin if needed */
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .me-3 {
+    margin-left: 0 !important; /* Reset the margin */
+    margin-right: 0.25rem; /* Adjust the right margin if needed */
+  }
 }

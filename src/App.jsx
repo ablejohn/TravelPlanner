@@ -3,13 +3,14 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Home from "./Components/Home";
 import TravelPlanPage from "./Components/TravelPlanPage";
-import RecentPlaces from "./Components/PopularDestinations";
+
+import ButtonPage from "./Components/Button"; // Import the Button component
 import AirplaneLoader from "./Lottiefiles/AirplaneLoader.json";
+
 import Lottie from "lottie-react";
 import NavBar from "./Components/NavBar";
 import Footer from "./Components/Footer";
 import "mdb-react-ui-kit/dist/css/mdb.min.css";
-import PopularDestinations from "./Components/PopularDestinations";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -45,10 +46,8 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/travel-plan" element={<TravelPlanPage />} />
-            <Route
-              path="/popular-destinations"
-              element={<PopularDestinations />}
-            />
+
+            <Route path="/buy" element={<ButtonPage />} />
           </Routes>
         </div>
         <Footer />

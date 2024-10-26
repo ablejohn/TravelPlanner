@@ -11,7 +11,9 @@
   .custom-navbar .nav-link {
     color: white !important;
   }
-  
+  .me-auto{
+    font-size: 20px !important;
+  }
   .custom-navbar .nav-link:hover {
     color: lightgrey !important;
   }
@@ -19,7 +21,7 @@
 
 /* Custom background for the navbar */
 .custom-navbar {
-    background-color:#0056b3!important;
+    background-color:#0a4275!important;
     border-bottom: 2px solid #000; /* Optional: Adds a bottom border */
     color: white;
   }

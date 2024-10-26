@@ -1,6 +1,6 @@
 #payment-button-container {
   display: flex;
-  justify-content: center; /* Centers horizontally */
+  justify-content: flex-start; /* Aligns items to the start (left) */
   align-items: center; /* Centers vertically (if needed) */
   margin: 0 auto; /* Optional: ensures no additional margins */
   width: 100%; /* Ensures it takes full width of its parent */

@@ -1,141 +1,45 @@
-import React from "react";
-import {
-  MDBFooter,
-  MDBContainer,
-  MDBIcon,
-  MDBInput,
-  MDBCol,
-  MDBRow,
-  MDBRipple,
-} from "mdb-react-ui-kit";
-
-export default function Footer() {
+import ButtonPage from "./Button"; // Import the Button component
+import "mdb-react-ui-kit/dist/css/mdb.min.css";
+import "./Custom.css";
+const Footer = () => {
   return (
-    <MDBFooter
-      className="text-center text-white"
-      style={{ backgroundColor: "#0056b3" }}
-    >
-      <MDBContainer className="p-4">
-        <section className="">
-          <MDBRow>
-            <MDBCol lg="2" md="12" className="mb-4 mb-md-0">
-              <MDBRipple
-                rippleColor="light"
-                className="bg-image hover-overlay shadow-1-strong rounded"
-              >
-                <img
-                  src="https://mdbcdn.b-cdn.net/img/new/fluid/city/113.webp"
-                  className="w-100"
-                />
-                <a href="#!">
-                  <div
-                    className="mask"
-                    style={{ backgroundColor: "rgba(251, 251, 241, 0.2)" }}
-                  ></div>
-                </a>
-              </MDBRipple>
-            </MDBCol>
-            <MDBCol lg="2" md="12" className="mb-4 mb-md-0">
-              <MDBRipple
-                rippleColor="light"
-                className="bg-image hover-overlay shadow-1-strong rounded"
-              >
-                <img
-                  src="https://mdbcdn.b-cdn.net/img/new/fluid/city/111.webp"
-                  className="w-100"
-                />
-                <a href="#!">
-                  <div
-                    className="mask"
-                    style={{ backgroundColor: "rgba(251, 251, 251, 0.2)" }}
-                  ></div>
-                </a>
-              </MDBRipple>
-            </MDBCol>
-            <MDBCol lg="2" md="12" className="mb-4 mb-md-0">
-              <MDBRipple
-                rippleColor="light"
-                className="bg-image hover-overlay shadow-1-strong rounded"
-              >
-                <img
-                  src="https://mdbcdn.b-cdn.net/img/new/fluid/city/112.webp"
-                  className="w-100"
-                />
-                <a href="#!">
-                  <div
-                    className="mask"
-                    style={{ backgroundColor: "rgba(251, 251, 251, 0.2)" }}
-                  ></div>
-                </a>
-              </MDBRipple>
-            </MDBCol>
-            <MDBCol lg="2" md="12" className="mb-4 mb-md-0">
-              <MDBRipple
-                rippleColor="light"
-                className="bg-image hover-overlay shadow-1-strong rounded"
-              >
-                <img
-                  src="https://mdbcdn.b-cdn.net/img/new/fluid/city/114.webp"
-                  className="w-100"
-                />
-                <a href="#!">
-                  <div
-                    className="mask"
-                    style={{ backgroundColor: "rgba(251, 251, 251, 0.2)" }}
-                  ></div>
-                </a>
-              </MDBRipple>
-            </MDBCol>
-            <MDBCol lg="2" md="12" className="mb-4 mb-md-0">
-              <MDBRipple
-                rippleColor="light"
-                className="bg-image hover-overlay shadow-1-strong rounded"
-              >
-                <img
-                  src="https://mdbcdn.b-cdn.net/img/new/fluid/city/115.webp"
-                  className="w-100"
-                />
-                <a href="#!">
-                  <div
-                    className="mask"
-                    style={{ backgroundColor: "rgba(251, 251, 251, 0.2)" }}
-                  ></div>
-                </a>
-              </MDBRipple>
-            </MDBCol>
-            <MDBCol lg="2" md="12" className="mb-4 mb-md-0">
-              <MDBRipple
-                rippleColor="light"
-                className="bg-image hover-overlay shadow-1-strong rounded"
-              >
-                <img
-                  src="https://mdbcdn.b-cdn.net/img/new/fluid/city/116.webp"
-                  className="w-100"
-                />
-                <a href="#!">
-                  <div
-                    className="mask"
-                    style={{ backgroundColor: "rgba(251, 251, 251, 0.2)" }}
-                  ></div>
-                </a>
-              </MDBRipple>
-            </MDBCol>
-          </MDBRow>
-        </section>
-      </MDBContainer>
-
-      <div
-        className="text-center p-3"
-        style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
+    <section>
+      {/* Footer */}
+      <footer
+        className="text-center text-white"
+        style={{ backgroundColor: "#0a4275" }}
       >
-        © 2024 Copyright:
-        <a
-          className="text-white"
-          href="https://www.linkedin.com/in/john-abe-601247236/"
+        <div className="container p-4 pb-0">
+          {/* Section: CTA */}
+          <section>
+            <p
+              className="d-flex justify-content-center align-items-center"
+              style={{ whiteSpace: "nowrap" }}
+            >
+              <span className="me-3">Wanna buy me a coffee?</span>
+              <ButtonPage />
+            </p>
+          </section>
+        </div>
+
+        {/* Copyright */}
+        <div
+          className="text-center p-3"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
         >
-          John Ayomide ABE
-        </a>
-      </div>
-    </MDBFooter>
+          © 2024 Copyright:{" "}
+          <a
+            className="text-white"
+            href="https://www.linkedin.com/in/john-abe-601247236/"
+          >
+            Mr ableJohn
+          </a>
+        </div>
+        {/* Copyright */}
+      </footer>
+      {/* Footer */}
+    </section>
   );
-}
+};
+
+export default Footer;

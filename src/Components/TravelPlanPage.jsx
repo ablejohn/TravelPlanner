@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MDBBtn } from "mdb-react-ui-kit";
+import Button from "./Button"; // Import the Button component
 
 const styles = {
   container: {
@@ -16,10 +17,11 @@ const styles = {
     boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
   },
   title: {
-    fontSize: "2.5rem",
-    color: "#2c3e50",
+    fontSize: "4rem",
+    color: "#0a4275",
     marginBottom: "20px",
     textAlign: "center",
+    fontWeight: "Bold",
   },
   summary: {
     display: "grid",
@@ -37,12 +39,13 @@ const styles = {
   },
   summaryLabel: {
     fontWeight: "bold",
+    fontSize: "2rem",
     color: "#34495e",
     marginBottom: "5px",
   },
   summaryValue: {
     color: "#7f8c8d",
-    fontSize: "1.1rem",
+    fontSize: "1.8rem",
   },
   sectionsContainer: {
     display: "grid",
@@ -81,6 +84,7 @@ const TravelPlanPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const tripPlan = location.state?.tripPlan;
+  const [showPaymentButton, setShowPaymentButton] = useState(false); // State to control visibility of payment button
 
   if (!tripPlan) {
     return (
@@ -99,7 +103,7 @@ const TravelPlanPage = () => {
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <h1 style={styles.title}>Your Travel Plan</h1>
+        <h1 style={styles.title}>YOUR TRAVEL PLAN</h1>
         <div style={styles.summary}>
           <div style={styles.summaryItem}>
             <div style={styles.summaryLabel}>Destination</div>
@@ -121,22 +125,18 @@ const TravelPlanPage = () => {
           <div style={styles.sectionHeader}>Key Attractions</div>
           <div style={styles.content}>{aiGeneratedPlan.attractions}</div>
         </div>
-
         <div style={styles.section}>
           <div style={styles.sectionHeader}>Accommodation</div>
           <div style={styles.content}>{aiGeneratedPlan.accommodation}</div>
         </div>
-
         <div style={styles.section}>
           <div style={styles.sectionHeader}>Food Recommendations</div>
           <div style={styles.content}>{aiGeneratedPlan.food}</div>
         </div>
-
         <div style={styles.section}>
           <div style={styles.sectionHeader}>Transportation</div>
           <div style={styles.content}>{aiGeneratedPlan.transportation}</div>
         </div>
-
         <div style={styles.section}>
           <div style={styles.sectionHeader}>Budget Breakdown</div>
           <div style={styles.content}>{aiGeneratedPlan.budget}</div>
@@ -145,9 +145,16 @@ const TravelPlanPage = () => {
 
       <div style={styles.buttonContainer}>
         <MDBBtn onClick={() => navigate("/")}>Create New Plan</MDBBtn>
-        <MDBBtn onClick={() => window.print()} color="#070644">
-          Save as PDF
-        </MDBBtn>
+        {!showPaymentButton ? (
+          <MDBBtn
+            onClick={() => setShowPaymentButton(true)}
+            className="custom-btn"
+          >
+            Pay to Save Travel Plan
+          </MDBBtn>
+        ) : (
+          <Button onPaymentVerified={() => console.log("Payment verified!")} />
+        )}
       </div>
     </div>
   );
